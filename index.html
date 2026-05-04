@@ -126,40 +126,46 @@
   /* Mode tabs at the top of setup card */
   .mode-tabs {
     display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
     gap: 4px;
     background: white;
     border: 4px solid var(--ink);
-    border-radius: 999px;
+    border-radius: 22px;
     padding: 4px;
     margin: 0 auto 24px;
     width: fit-content;
+    max-width: 100%;
     box-shadow: var(--shadow);
   }
   .mode-tab {
     font-family: 'Fredoka', sans-serif;
     font-weight: 700;
-    font-size: 1.05rem;
+    font-size: 1rem;
     border: none;
     background: transparent;
-    padding: 10px 20px;
-    border-radius: 999px;
+    padding: 9px 14px;
+    border-radius: 16px;
     cursor: pointer;
     color: var(--ink-soft);
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
     transition: background 0.25s ease, color 0.25s ease, transform 0.15s ease;
+    white-space: nowrap;
   }
-  .mode-tab .tab-icon { font-size: 1.25rem; line-height: 1; }
+  .mode-tab .tab-icon { font-size: 1.2rem; line-height: 1; }
   .mode-tab:hover { transform: translateY(-1px); }
-  .mode-tab.active {
-    background: var(--cherry);
-    color: white;
-    text-shadow: 1px 1px 0 var(--cherry-deep);
+  .mode-tab.active { color: white; }
+  .mode-tab[data-mode="vocab"].active     { background: var(--cherry); text-shadow: 1px 1px 0 var(--cherry-deep); }
+  .mode-tab[data-mode="math"].active      { background: var(--mint);   text-shadow: 1px 1px 0 var(--mint-deep); }
+  @media (max-width: 580px) {
+    .mode-tab { padding: 8px 10px; font-size: 0.88rem; gap: 4px; }
   }
-  .mode-tab[data-mode="math"].active { background: var(--mint); text-shadow: 1px 1px 0 var(--mint-deep); }
-  @media (max-width: 480px) {
-    .mode-tab { padding: 9px 14px; font-size: 0.95rem; }
+  @media (max-width: 380px) {
+    .mode-tab .tab-label { display: none; }
+    .mode-tab .tab-icon { font-size: 1.4rem; }
+    .mode-tab { padding: 8px 12px; }
   }
 
   .title {
@@ -543,6 +549,50 @@
     line-height: 1.1;
     word-break: break-word;
   }
+  /* Trivia/geography/history questions are full sentences — scale down so they fit. */
+  .q-word.q-long {
+    font-size: clamp(1.15rem, 3.4vw, 1.7rem);
+    line-height: 1.3;
+  }
+
+  /* Word + audio button row */
+  .q-word-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  /* Audio button (vocab pronunciation) */
+  .audio-btn {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    border: 4px solid var(--ink);
+    background: var(--sky);
+    cursor: pointer;
+    font-size: 1.4rem;
+    line-height: 1;
+    display: grid;
+    place-items: center;
+    box-shadow: var(--shadow);
+    transition: transform 0.12s ease, box-shadow 0.12s ease, background 0.2s ease;
+    color: white;
+    flex-shrink: 0;
+  }
+  .audio-btn:hover { transform: translateY(-3px); }
+  .audio-btn:active { transform: translateY(2px); box-shadow: 0 4px 0 rgba(45, 42, 74, 0.18); }
+  .audio-btn[hidden] { display: none; }
+  .audio-btn.speaking {
+    background: var(--sun);
+    color: var(--ink);
+    animation: audio-pulse 0.6s ease-in-out infinite;
+  }
+  @keyframes audio-pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+  }
 
   /* Example sentence shown inside the question card (vocab mode only) */
   .q-sentence {
@@ -715,6 +765,145 @@
     font-size: 1.3rem;
     color: var(--ink-soft);
     margin-bottom: 28px;
+  }
+
+  /* ========== Review screen ========== */
+  .review-title {
+    text-align: center;
+    font-size: clamp(2rem, 5vw, 2.6rem);
+    color: var(--grape-deep);
+    text-shadow: 3px 3px 0 var(--sun);
+    margin-bottom: 6px;
+  }
+  .review-sub {
+    text-align: center;
+    font-family: 'Fredoka', sans-serif;
+    font-weight: 600;
+    color: var(--ink-soft);
+    margin-bottom: 24px;
+  }
+  .review-empty {
+    text-align: center;
+    background: #DFFFF6;
+    border: 4px dashed var(--mint-deep);
+    border-radius: 20px;
+    padding: 28px 16px;
+    margin-bottom: 24px;
+  }
+  .review-empty-msg {
+    font-family: 'Bowlby One', sans-serif;
+    font-size: 1.4rem;
+    color: var(--mint-deep);
+    margin-top: 10px;
+  }
+  .review-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+  @media (max-width: 600px) {
+    .review-grid { grid-template-columns: 1fr; }
+  }
+  .review-col {
+    background: white;
+    border: 4px solid var(--ink);
+    border-radius: 20px;
+    padding: 16px;
+    box-shadow: var(--shadow);
+  }
+  .review-col.p1 { background: #FFE0E6; }
+  .review-col.p2 { background: #DFFFF6; }
+  .review-col-head {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+    padding-bottom: 10px;
+    border-bottom: 3px dashed var(--ink-soft);
+  }
+  .review-col-head .pemoji {
+    font-size: 1.6rem;
+    width: 38px; height: 38px;
+    background: white;
+    border: 3px solid var(--ink);
+    border-radius: 10px;
+    display: grid;
+    place-items: center;
+  }
+  .review-col-head .pname {
+    font-family: 'Fredoka', sans-serif;
+    font-weight: 700;
+    font-size: 1.1rem;
+  }
+  .review-col-head .pcount {
+    margin-left: auto;
+    font-family: 'Bowlby One', sans-serif;
+    font-size: 1rem;
+    color: var(--cherry-deep);
+    background: white;
+    border: 3px solid var(--ink);
+    border-radius: 10px;
+    padding: 4px 10px;
+  }
+  .review-col.p2 .pcount { color: var(--mint-deep); }
+  .review-col-empty {
+    font-family: 'Fredoka', sans-serif;
+    font-weight: 600;
+    color: var(--mint-deep);
+    text-align: center;
+    padding: 12px 8px;
+    font-size: 1rem;
+  }
+  .review-item {
+    background: white;
+    border: 3px solid var(--ink);
+    border-radius: 14px;
+    padding: 12px 14px;
+    margin-bottom: 10px;
+    font-family: 'Fredoka', sans-serif;
+  }
+  .review-item:last-child { margin-bottom: 0; }
+  .review-item .ri-word {
+    font-family: 'Bowlby One', sans-serif;
+    color: var(--grape-deep);
+    font-size: 1.1rem;
+    margin-bottom: 4px;
+    word-break: break-word;
+    line-height: 1.2;
+  }
+  .review-item .ri-type {
+    display: inline-block;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    background: var(--sun);
+    color: var(--ink);
+    border-radius: 8px;
+    padding: 2px 8px;
+    margin-bottom: 6px;
+  }
+  .review-item .ri-correct {
+    font-weight: 600;
+    color: var(--mint-deep);
+    font-size: 0.95rem;
+    margin-bottom: 6px;
+  }
+  .review-item .ri-correct::before { content: "✓ "; }
+  .review-item .ri-sentence {
+    font-style: italic;
+    color: var(--ink-soft);
+    font-size: 0.9rem;
+    line-height: 1.4;
+  }
+  .review-item .ri-sentence .hl {
+    background: var(--sun);
+    color: var(--ink);
+    border-radius: 4px;
+    padding: 0 4px;
+    font-weight: 700;
+    font-style: normal;
   }
 
   /* ========== Results screen ========== */
@@ -1064,7 +1253,10 @@
 
       <div class="question-card">
         <p class="q-prompt" id="q-prompt">What does this word mean?</p>
-        <div class="q-word" id="q-word">happy</div>
+        <div class="q-word-row">
+          <div class="q-word" id="q-word">happy</div>
+          <button class="audio-btn" id="audio-btn" type="button" aria-label="Hear the word" hidden>🔊</button>
+        </div>
         <p class="q-sentence" id="q-sentence" hidden></p>
       </div>
 
@@ -1091,7 +1283,28 @@
     </div>
   </section>
 
-  <!-- ========== SCREEN 4: RESULTS ========== -->
+  <!-- ========== SCREEN 4: REVIEW (between quiz and results) ========== -->
+  <section class="screen" id="screen-review">
+    <div class="card">
+      <h2 class="review-title">📋 Review Time</h2>
+      <p class="review-sub">Here's what to remember from this game.</p>
+
+      <div class="review-empty" id="review-empty" hidden>
+        <span class="big-emoji">🎉</span>
+        <p class="review-empty-msg">Wow! You both got every question right!</p>
+      </div>
+
+      <div class="review-grid" id="review-grid">
+        <!-- Filled by JS: one column per player listing missed questions -->
+      </div>
+
+      <div class="actions-row">
+        <button class="btn btn-big btn-grape" id="btn-see-results">See Results 🏆</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== SCREEN 5: RESULTS ========== -->
   <section class="screen" id="screen-results">
     <div class="card">
       <div class="winner-display">
@@ -1384,8 +1597,8 @@ const WORDS = {
 /* ---------- State ---------- */
 const state = {
   players: [
-    { name: "Player 1", emoji: "🦊", score: 0, qIndex: 0, words: [] },
-    { name: "Player 2", emoji: "🐨", score: 0, qIndex: 0, words: [] }
+    { name: "Player 1", emoji: "🦊", score: 0, qIndex: 0, words: [], misses: [] },
+    { name: "Player 2", emoji: "🐨", score: 0, qIndex: 0, words: [], misses: [] }
   ],
   gameMode: "vocab", // "vocab" or "math"
   difficulty: "medium",
@@ -1433,17 +1646,19 @@ $$(".diff-btn").forEach(btn => {
   });
 });
 
-/* Mode tabs (Words vs Math) */
+/* Mode tabs (Words / Math) */
 const MODE_COPY = {
   vocab: {
     titleWord: "Vocab",
     subtitle: "🚀 Two players. Take turns. One champion! 🏆",
-    quizPrompt: "What does this word mean?"
+    quizPrompt: "What does this word mean?",
+    championLabel: "Vocab Champion"
   },
   math:  {
     titleWord: "Math",
     subtitle: "🧮 Two players. Multiplication showdown! ✖️",
-    quizPrompt: "What is the answer?"
+    quizPrompt: "What is the answer?",
+    championLabel: "Math Champion"
   }
 };
 function applyModeUI(mode) {
@@ -1493,9 +1708,11 @@ $("#btn-start").addEventListener("click", () => {
   state.players[0].score = 0;
   state.players[0].qIndex = 0;
   state.players[0].words = p1Words;
+  state.players[0].misses = [];
   state.players[1].score = 0;
   state.players[1].qIndex = 0;
   state.players[1].words = p2Words;
+  state.players[1].misses = [];
   state.currentPlayer = 0;
 
   // Update scoreboard names/emojis
@@ -1510,12 +1727,52 @@ $("#btn-start").addEventListener("click", () => {
 });
 
 /* ---------- Pick a fresh randomized set of words for both players ---------- */
-function makeQuestion(w) {
+function makeQuestion(w, pool) {
+  // Synonym / antonym variation for vocab questions where data is available.
+  if (state.gameMode === "vocab" && (w.syn || w.ant) && pool) {
+    const r = Math.random();
+    if (r < 0.18 && w.syn) return makeSynAntQuestion(w, pool, "synonym");
+    if (r < 0.36 && w.ant) return makeSynAntQuestion(w, pool, "antonym");
+  }
   return {
     word: w.word,
     correct: w.correct,
     sentence: w.sentence,
+    questionType: "meaning",
     options: shuffle([w.correct, ...shuffle(w.distractors).slice(0, 3)])
+  };
+}
+
+/* Build a synonym or antonym question. Distractors are pulled from other entries'
+   syn/ant fields so they're real adjectives, not nonsense — and clearly not
+   synonyms (or antonyms) of the target word. */
+function makeSynAntQuestion(w, pool, type) {
+  const correct = type === "synonym" ? w.syn : w.ant;
+  const ownTerms = new Set([w.word.toLowerCase(), (w.syn || "").toLowerCase(), (w.ant || "").toLowerCase()]);
+  const candidates = [];
+  for (const e of pool) {
+    if (e === w) continue;
+    for (const term of [e.syn, e.ant]) {
+      if (term && !ownTerms.has(term.toLowerCase())) candidates.push(term);
+    }
+  }
+  const distractors = shuffle([...new Set(candidates)]).slice(0, 3);
+  // If we somehow can't gather 3 distractors, fall back to a meaning question.
+  if (distractors.length < 3) {
+    return {
+      word: w.word,
+      correct: w.correct,
+      sentence: w.sentence,
+      questionType: "meaning",
+      options: shuffle([w.correct, ...shuffle(w.distractors).slice(0, 3)])
+    };
+  }
+  return {
+    word: w.word,
+    correct,
+    sentence: w.sentence,
+    questionType: type,
+    options: shuffle([correct, ...distractors])
   };
 }
 
@@ -1604,15 +1861,40 @@ function setupMathGameWords(difficulty, count) {
     p2Pairs = shuffle(allPairs).slice(0, Math.min(count, allPairs.length));
   }
 
-  const toQ = ([a, b]) => makeQuestion(generateMathEntry(a, b));
+  const toQ = ([a, b]) => makeQuestion(generateMathEntry(a, b), null);
   return [p1Pairs.map(toQ), p2Pairs.map(toQ)];
 }
 
+/* Pool registry — each non-math mode is a {medium, hard} pair. */
+const POOLS = {
+  vocab: WORDS
+};
+
 /* Pick the right setup function based on the chosen game mode. */
 function setupAllGameWords() {
-  return state.gameMode === "math"
-    ? setupMathGameWords(state.difficulty, state.questionsPerPlayer)
-    : setupGameWords(state.difficulty, state.questionsPerPlayer);
+  if (state.gameMode === "math") {
+    return setupMathGameWords(state.difficulty, state.questionsPerPlayer);
+  }
+  const pool = POOLS[state.gameMode][state.difficulty];
+  return setupGameWordsFromPool(pool, state.questionsPerPlayer);
+}
+
+/* Same logic as setupGameWords but takes a pool directly so any mode can use it. */
+function setupGameWordsFromPool(pool, count) {
+  const shuffled = shuffle(pool);
+  const needed = count * 2;
+  if (shuffled.length >= needed) {
+    return [
+      shuffled.slice(0, count).map(w => makeQuestion(w, pool)),
+      shuffled.slice(count, needed).map(w => makeQuestion(w, pool))
+    ];
+  }
+  // Fallback for small pools — give each player a fresh shuffle so within-player
+  // uniqueness is preserved even if cross-player overlap can't be avoided.
+  return [
+    shuffle(pool).slice(0, Math.min(count, pool.length)).map(w => makeQuestion(w, pool)),
+    shuffle(pool).slice(0, Math.min(count, pool.length)).map(w => makeQuestion(w, pool))
+  ];
 }
 
 /* ---------- Player switch screen ---------- */
@@ -1628,6 +1910,32 @@ $("#btn-ready").addEventListener("click", () => {
   highlightActivePlayer();
   showQuestion();
 });
+
+/* Audio button — manual replay of the current word */
+$("#audio-btn").addEventListener("click", () => {
+  const player = state.players[state.currentPlayer];
+  const qData = player.words[player.qIndex];
+  if (qData) speakWord(qData.word);
+});
+
+/* Pronounce the word using the browser's speech synthesis. Silently no-ops if
+   the API is missing (some older browsers / kiosk modes). */
+function speakWord(text) {
+  if (!("speechSynthesis" in window)) return;
+  try {
+    window.speechSynthesis.cancel(); // stop anything mid-speak
+    const utter = new SpeechSynthesisUtterance(text);
+    utter.rate = 0.85;   // slightly slower than default — easier for kids
+    utter.pitch = 1.0;
+    utter.volume = 1.0;
+    utter.lang = "en-US";
+    const btn = $("#audio-btn");
+    utter.onstart = () => btn && btn.classList.add("speaking");
+    utter.onend   = () => btn && btn.classList.remove("speaking");
+    utter.onerror = () => btn && btn.classList.remove("speaking");
+    window.speechSynthesis.speak(utter);
+  } catch (e) { /* ignore — audio is a nice-to-have */ }
+}
 
 /* ---------- Quiz ---------- */
 function highlightActivePlayer() {
@@ -1645,9 +1953,22 @@ function showQuestion() {
 
   $("#q-num").textContent = (player.qIndex + 1);
   $("#q-total").textContent = state.questionsPerPlayer;
-  $("#q-word").textContent = qData.word;
 
-  // Show the sentence with the word highlighted (vocab only — math has no useful sentence here)
+  // Prompt depends on question type for vocab; otherwise use the mode's default.
+  let prompt = MODE_COPY[state.gameMode].quizPrompt;
+  if (state.gameMode === "vocab") {
+    if (qData.questionType === "synonym") prompt = "Which is a SYNONYM (similar meaning)?";
+    else if (qData.questionType === "antonym") prompt = "Which is an ANTONYM (opposite meaning)?";
+    else prompt = "What does this word mean?";
+  }
+  $("#q-prompt").textContent = prompt;
+
+  // Big text — scale font down for trivia question text (which is often long).
+  const wordEl = $("#q-word");
+  wordEl.textContent = qData.word;
+  wordEl.classList.toggle("q-long", qData.word.length > 24);
+
+  // In-question example sentence (vocab only)
   const qSentenceEl = $("#q-sentence");
   if (state.gameMode === "vocab" && qData.sentence) {
     qSentenceEl.innerHTML = highlightSentence(qData.word, qData.sentence, "vocab");
@@ -1655,6 +1976,15 @@ function showQuestion() {
   } else {
     qSentenceEl.hidden = true;
     qSentenceEl.innerHTML = "";
+  }
+
+  // Audio button — vocab only. Auto-pronounce the word once when the question loads.
+  const audioBtn = $("#audio-btn");
+  if (state.gameMode === "vocab") {
+    audioBtn.hidden = false;
+    speakWord(qData.word);
+  } else {
+    audioBtn.hidden = true;
   }
 
   // Build options
@@ -1718,6 +2048,8 @@ function handleAnswer(btn, chosen) {
       const text = b.querySelector(".text").textContent;
       if (text === qData.correct) b.classList.add("correct");
     });
+    // Record this miss for the end-of-game review
+    player.misses.push(qData);
     flashPop("Oops!", false);
     startStudyPause();
   }
@@ -1733,6 +2065,8 @@ function handleTimeout() {
     const text = b.querySelector(".text").textContent;
     if (text === qData.correct) b.classList.add("correct");
   });
+  // Record this miss for the end-of-game review
+  player.misses.push(qData);
   flashPop("Time's up!", true);
   startStudyPause();
 }
@@ -1818,7 +2152,7 @@ function nextStep() {
   const p1Done = state.players[0].qIndex >= state.questionsPerPlayer;
   const p2Done = state.players[1].qIndex >= state.questionsPerPlayer;
   if (p1Done && p2Done) {
-    goToResults();
+    goToReview();
     return;
   }
 
@@ -1868,6 +2202,63 @@ function randomCelebrate() {
   return opts[Math.floor(Math.random() * opts.length)];
 }
 
+/* ---------- Review screen (between quiz and results) ---------- */
+function goToReview() {
+  const p1 = state.players[0];
+  const p2 = state.players[1];
+  const totalMisses = p1.misses.length + p2.misses.length;
+  const reviewEmpty = $("#review-empty");
+  const reviewGrid = $("#review-grid");
+
+  if (totalMisses === 0) {
+    reviewEmpty.hidden = false;
+    reviewGrid.innerHTML = "";
+    burstConfetti();
+  } else {
+    reviewEmpty.hidden = true;
+    reviewGrid.innerHTML =
+      buildReviewColumn(p1, "p1") +
+      buildReviewColumn(p2, "p2");
+  }
+  showScreen("screen-review");
+}
+
+function buildReviewColumn(player, cls) {
+  const items = player.misses.map(q => {
+    let typeBadge = "";
+    if (q.questionType === "synonym") typeBadge = `<span class="ri-type">Synonym</span>`;
+    else if (q.questionType === "antonym") typeBadge = `<span class="ri-type">Antonym</span>`;
+    let sentenceBlock = "";
+    if (q.sentence) {
+      const html = highlightSentence(q.word, q.sentence, state.gameMode);
+      sentenceBlock = `<p class="ri-sentence">${html}</p>`;
+    }
+    return `
+      <div class="review-item">
+        <div class="ri-word">${escapeHtml(q.word)}</div>
+        ${typeBadge}
+        <div class="ri-correct">${escapeHtml(q.correct)}</div>
+        ${sentenceBlock}
+      </div>`;
+  }).join("");
+
+  const inner = items || `<p class="review-col-empty">⭐ No misses — perfect round!</p>`;
+  return `
+    <div class="review-col ${cls}">
+      <div class="review-col-head">
+        <div class="pemoji">${escapeHtml(player.emoji)}</div>
+        <div class="pname">${escapeHtml(player.name)}</div>
+        <div class="pcount">${player.misses.length} missed</div>
+      </div>
+      ${inner}
+    </div>`;
+}
+
+$("#btn-see-results").addEventListener("click", () => {
+  goToResults();
+});
+
+
 /* ---------- Results ---------- */
 function goToResults() {
   const p1 = state.players[0];
@@ -1885,7 +2276,7 @@ function goToResults() {
   $("#final-p1").classList.remove("winner");
   $("#final-p2").classList.remove("winner");
 
-  const championLabel = state.gameMode === "math" ? "Math Champion" : "Vocab Champion";
+  const championLabel = MODE_COPY[state.gameMode].championLabel;
   const winText = "is the " + championLabel + "! 🎉";
 
   if (p1.score > p2.score) {
@@ -1917,9 +2308,11 @@ $("#btn-rematch").addEventListener("click", () => {
   state.players[0].score = 0;
   state.players[0].qIndex = 0;
   state.players[0].words = p1Words;
+  state.players[0].misses = [];
   state.players[1].score = 0;
   state.players[1].qIndex = 0;
   state.players[1].words = p2Words;
+  state.players[1].misses = [];
   state.currentPlayer = 0;
   $("#sc-p1-score").textContent = "0";
   $("#sc-p2-score").textContent = "0";
